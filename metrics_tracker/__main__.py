@@ -57,7 +57,7 @@ def main():
 
     if args.list:
         longest_metric = len(max(metrics, key=len))
-        longest_value = len(str(max([value for value in metrics.values()])))
+        longest_value = len(str(max(metrics.values())))
 
         counter = 0
 
