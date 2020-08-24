@@ -20,8 +20,10 @@ def main():
         parser.print_help()
         sys.exit(1)
 
+    # TODO Maybe this could be more elaborate?
     parser.add_argument("--create", nargs=1, metavar="metric")
     parser.add_argument("--add", nargs=2, metavar=("metric", "amount"))
+    parser.add_argument("--update", nargs=2, metavar=("old_name", "new_name"))
     parser.add_argument("--reset", nargs=1, metavar="metric")
     parser.add_argument("--remove", nargs=1, metavar="metric")
     parser.add_argument("--delete", action="store_true")
@@ -36,6 +38,11 @@ def main():
     if args.add:
         metric, to_add = args.add
         metrics[metric] = str(int(metrics[metric]) + int(to_add))
+
+    if args.update:
+        old_key, new_key = args.update
+        metrics[new_key] = metrics[old_key]
+        del metrics[old_key]
 
     if args.reset:
         metric = args.reset[0]
