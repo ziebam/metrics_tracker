@@ -72,8 +72,12 @@ def main():
         del metrics[old_key]
 
     if args.reset:
-        metric = args.reset[0]
-        metrics[metric] = 0
+        if decision_confirmed():
+            metric = args.reset[0]
+            metrics[metric] = 0
+        else:
+
+            sys.exit("Operation cancelled. Aborting.")
 
     if args.remove:
         metric = args.remove[0]
