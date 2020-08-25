@@ -45,8 +45,7 @@ def main():
     parser = argparse.ArgumentParser(prog="Metrics Tracker")
 
     if len(sys.argv) == 1:
-        parser.print_help()
-        sys.exit(1)
+        sys.exit(parser.print_help())
 
     parser.add_argument("--create", nargs=1, metavar="metric")
     parser.add_argument("--add", nargs=2, metavar=("metric", "amount"))
