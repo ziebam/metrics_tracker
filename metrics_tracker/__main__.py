@@ -74,7 +74,10 @@ def main():
         metrics = dict()
 
     if args.list:
-        print_data(metrics)
+        if metrics:
+            print_data(metrics)
+        else:
+            sys.exit("There isn't any data to list. Aborting.")
 
     with open(data_file, "wb") as data:
         pickle.dump(metrics, data)
