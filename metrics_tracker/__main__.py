@@ -4,6 +4,25 @@ import sys
 from pathlib import Path
 
 
+def print_data(data, padding=4):
+    first_column_width = len(max(data, key=len)) + padding
+    second_column_width = len(str(max(data.values()))) + padding
+
+    header = f"┌{'─' * first_column_width}┬{'─' * second_column_width}┐"
+    middle = f"\n├{'─' * first_column_width}┼{'─' * second_column_width}┤\n"
+    footer = f"└{'─' * first_column_width}┴{'─' * second_column_width}┘"
+
+    rows = [
+        f"│{key.center(first_column_width)}│{str(value).center(second_column_width)}│"
+        for key, value in data.items()
+    ]
+    printable_data = middle.join(rows)
+
+    print(header)
+    print(printable_data)
+    print(footer)
+
+
 def main():
     data_file = Path("data.pickle")
 
@@ -20,7 +39,6 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    # TODO Maybe this could be more elaborate?
     parser.add_argument("--create", nargs=1, metavar="metric")
     parser.add_argument("--add", nargs=2, metavar=("metric", "amount"))
     parser.add_argument("--update", nargs=2, metavar=("old_name", "new_name"))
@@ -37,7 +55,7 @@ def main():
 
     if args.add:
         metric, to_add = args.add
-        metrics[metric] = str(int(metrics[metric]) + int(to_add))
+        metrics[metric] = metrics[metric] + int(to_add)
 
     if args.update:
         old_key, new_key = args.update
@@ -56,31 +74,7 @@ def main():
         metrics = dict()
 
     if args.list:
-        longest_metric = len(max(metrics, key=len))
-        longest_value = len(str(max(metrics.values())))
-
-        counter = 0
-
-        print("┌" + "─" * (longest_metric + 6) + "┬" + "─" * (longest_value + 4) + "┐")
-        for metric, value in metrics.items():
-            counter += 1
-            print(
-                "│"
-                + metric.center(longest_metric + 6)
-                + "│"
-                + str(value).center(longest_value + 4)
-                + "│"
-            )
-
-            if counter < len(metrics):
-                print(
-                    "├"
-                    + "─" * (longest_metric + 6)
-                    + "┼"
-                    + "─" * (longest_value + 4)
-                    + "┤"
-                )
-        print("└" + "─" * (longest_metric + 6) + "┴" + "─" * (longest_value + 4) + "┘")
+        print_data(metrics)
 
     with open(data_file, "wb") as data:
         pickle.dump(metrics, data)
