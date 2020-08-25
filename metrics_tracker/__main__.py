@@ -71,6 +71,15 @@ def main():
         del metrics[metric]
 
     if args.delete:
+        decision = input("Are you sure (y/n)?: ").lower()
+
+        if decision in ["y", "ye", "yes"]:
+            metrics = dict()
+        elif decision in ["n", "no"]:
+            sys.exit("Operation cancelled. Aborting.")
+        else:
+            sys.exit("Answer invalid. Aborting.")
+
         metrics = dict()
 
     if args.list:
