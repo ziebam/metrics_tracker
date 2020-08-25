@@ -40,10 +40,7 @@ def print_data(data, padding=2):
 def decision_confirmed():
     decision = input("Are you sure (y/n)?: ").lower()
 
-    if decision in ["y", "ye", "yes"]:
-        return True
-    else:
-        return False
+    return bool(decision in ["y", "ye", "yes"])
 
 
 def main():
@@ -95,8 +92,6 @@ def main():
 
     if args.remove:
         index = args.remove[0]
-
-        [[1, 2, 3], [2, 2, 3], [3, 2, 3]]
 
         for idx, _ in enumerate(metrics[index - 1 :]):
             metrics[idx][0] -= 1
