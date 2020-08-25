@@ -4,18 +4,32 @@ import sys
 from pathlib import Path
 
 
-def print_data(data, padding=4):
-    first_column_width = len(max(data, key=len)) + padding
-    second_column_width = len(str(max(data.values()))) + padding
+def print_data(data, padding=2):
+    num_of_columns = len(data[0])
 
-    header = f"┌{'─' * first_column_width}┬{'─' * second_column_width}┐"
-    middle = f"\n├{'─' * first_column_width}┼{'─' * second_column_width}┤\n"
-    footer = f"└{'─' * first_column_width}┴{'─' * second_column_width}┘"
+    if not all(len(row) == num_of_columns for row in data):
+        sys.exit("Invalid data. Aborting.")
 
-    rows = [
-        f"│{key.center(first_column_width)}│{str(value).center(second_column_width)}│"
-        for key, value in data.items()
-    ]
+    column_widths = []
+    for i in range(num_of_columns):
+        column_items = [str(row[i]) for row in data]
+        column_width = len(max(column_items, key=len)) + padding
+
+        column_widths.append(column_width)
+
+    border = ["─" * width for width in column_widths]
+
+    header = f"┌{'┬'.join(border)}┐"
+    middle = f"\n├{'┼'.join(border)}┤\n"
+    footer = f"└{'┴'.join(border)}┘"
+
+    rows = []
+
+    for row in data:
+        rows.append(
+            f"│{'│'.join([str(value).center(width) for value, width in zip(row, column_widths)])}│"
+        )
+
     printable_data = middle.join(rows)
 
     print(header)
@@ -37,7 +51,7 @@ def main():
 
     if not data_file.is_file():
         with open(data_file, "wb") as data:
-            pickle.dump(dict(), data)
+            pickle.dump([], data)
 
     with open(data_file, "rb") as data:
         metrics = pickle.load(data)
@@ -48,43 +62,52 @@ def main():
         sys.exit(parser.print_help())
 
     parser.add_argument("--create", nargs=1, metavar="metric")
-    parser.add_argument("--add", nargs=2, metavar=("metric", "amount"))
-    parser.add_argument("--update", nargs=2, metavar=("old_name", "new_name"))
-    parser.add_argument("--reset", nargs=1, metavar="metric")
-    parser.add_argument("--remove", nargs=1, metavar="metric")
+    parser.add_argument("--add", nargs=2, type=int, metavar=("metric", "amount"))
+    parser.add_argument("--update", nargs=2, metavar=("index", "new_name"))
+    parser.add_argument("--reset", nargs=1, type=int, metavar="metric")
+    parser.add_argument("--remove", nargs=1, type=int, metavar="metric")
     parser.add_argument("--delete", action="store_true")
     parser.add_argument("--list", action="store_true")
 
     args = parser.parse_args()
 
     if args.create:
+        metric_id = len(metrics) + 1
         metric = args.create[0]
-        metrics[metric] = 0
+        metrics.append([metric_id, metric, 0])
 
     if args.add:
-        metric, to_add = args.add
-        metrics[metric] = metrics[metric] + int(to_add)
+        metric_id, to_add = args.add
+        metrics[metric_id - 1][2] += to_add
 
     if args.update:
-        old_key, new_key = args.update
-        metrics[new_key] = metrics[old_key]
-        del metrics[old_key]
+        index, new_name = args.update
+        index = int(index)
+
+        metrics[index - 1][1] = new_name
 
     if args.reset:
         if decision_confirmed():
-            metric = args.reset[0]
-            metrics[metric] = 0
+            index = args.reset[0]
+            metrics[index - 1][2] = 0
         else:
-
             sys.exit("Operation cancelled. Aborting.")
 
     if args.remove:
-        metric = args.remove[0]
-        del metrics[metric]
+        index = args.remove[0]
+
+        [[1, 2, 3], [2, 2, 3], [3, 2, 3]]
+
+        for idx, _ in enumerate(metrics[index - 1 :]):
+            metrics[idx][0] -= 1
+
+        del metrics[index - 1]
+
+        print(metrics)
 
     if args.delete:
         if decision_confirmed():
-            metrics = dict()
+            metrics = []
         else:
             sys.exit("Operation cancelled. Aborting.")
 
