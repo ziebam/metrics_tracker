@@ -23,6 +23,15 @@ def print_data(data, padding=4):
     print(footer)
 
 
+def decision_confirmed():
+    decision = input("Are you sure (y/n)?: ").lower()
+
+    if decision in ["y", "ye", "yes"]:
+        return True
+    else:
+        return False
+
+
 def main():
     data_file = Path("data.pickle")
 
@@ -71,16 +80,10 @@ def main():
         del metrics[metric]
 
     if args.delete:
-        decision = input("Are you sure (y/n)?: ").lower()
-
-        if decision in ["y", "ye", "yes"]:
+        if decision_confirmed():
             metrics = dict()
-        elif decision in ["n", "no"]:
-            sys.exit("Operation cancelled. Aborting.")
         else:
-            sys.exit("Answer invalid. Aborting.")
-
-        metrics = dict()
+            sys.exit("Operation cancelled. Aborting.")
 
     if args.list:
         if metrics:
