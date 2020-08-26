@@ -104,6 +104,7 @@ def main():
 
     if args.list:
         if metrics:
+            clear_screen()
             print_data(metrics)
         else:
             sys.exit("There isn't any data to list. Aborting.")
