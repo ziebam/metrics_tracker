@@ -1,7 +1,12 @@
 import argparse
 import pickle
 import sys
+import os
 from pathlib import Path
+
+
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
 
 
 def print_data(data, padding=2):
@@ -21,7 +26,7 @@ def print_data(data, padding=2):
 
     header = f"┌{'┬'.join(border)}┐"
     middle = f"\n├{'┼'.join(border)}┤\n"
-    footer = f"└{'┴'.join(border)}┘"
+    footer = f"└{'┴'.join(border)}┘\n"
 
     rows = []
 
@@ -73,36 +78,63 @@ def main():
         metric = args.create[0]
         metrics.append([metric_id, metric, 0])
 
+        clear_screen()
+        print(f'Created metric "{metric}" succesfully.')
+        print_data(metrics)
+
     if args.add:
         metric_id, to_add = args.add
         metrics[metric_id - 1][2] += to_add
 
+        clear_screen()
+        print(
+            f'Added {to_add} to the metric "{metrics[metric_id - 1][1]}" succesfully.'
+        )
+        print_data(metrics)
+
     if args.update:
         index, new_name = args.update
         index = int(index)
+        old_name = metrics[index - 1][1]
 
         metrics[index - 1][1] = new_name
+
+        clear_screen()
+        print(f'Updated name of metric "{old_name}" to "{new_name}" succesfully.')
+        print_data(metrics)
 
     if args.reset:
         if decision_confirmed():
             index = args.reset[0]
             metrics[index - 1][2] = 0
+
+            clear_screen()
+            print(f'Reset metric "{metrics[index - 1][1]}" to 0 succesfully.')
+            print_data(metrics)
         else:
             sys.exit("Operation cancelled. Aborting.")
 
     if args.remove:
-        index = args.remove[0]
+        if decision_confirmed():
+            index = args.remove[0]
+            name = metrics[index - 1][1]
 
-        for idx, _ in enumerate(metrics[index - 1 :]):
-            metrics[idx][0] -= 1
+            for idx, _ in enumerate(metrics[index:]):
+                metrics[idx][0] -= 1
 
-        del metrics[index - 1]
+            del metrics[index - 1]
 
-        print(metrics)
+            clear_screen()
+            print(f'Removed metric "{name}" succesfully.')
+            print_data(metrics)
+        else:
+            sys.exit("Operation cancelled. Aborting.")
 
     if args.delete:
         if decision_confirmed():
             metrics = []
+            clear_screen()
+            print("Deleted the data succesfully.\n")
         else:
             sys.exit("Operation cancelled. Aborting.")
 
