@@ -1,12 +1,25 @@
+"""Pprinting utilities for the `metrics_tracker` module."""
+
 import os
 import sys
 
 
 def clear_screen():
+    """Clears the console screen (cross-platform)."""
+
     os.system("cls" if os.name == "nt" else "clear")
 
 
 def print_data(data, padding=2):
+    """Pretty-prints the data to the terminal.
+
+    Args:
+        data: A list of lists. It can have a variable number of columns, given
+          that their amount stays consistent throughout the rows.
+        padding: Optional; The amount of whitespace between the value and the
+          table border.
+    """
+
     num_of_columns = len(data[0])
 
     if not all(len(row) == num_of_columns for row in data):
