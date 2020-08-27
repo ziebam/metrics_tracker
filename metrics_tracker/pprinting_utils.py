@@ -10,7 +10,7 @@ def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def print_data(data, padding=2):
+def print_data(data, padding=1):
     """Pretty-prints the data to the terminal.
 
     Args:
@@ -28,7 +28,7 @@ def print_data(data, padding=2):
     column_widths = []
     for i in range(num_of_columns):
         column_items = [str(row[i]) for row in data]
-        column_width = len(max(column_items, key=len)) + padding
+        column_width = len(max(column_items, key=len)) + padding * 2
 
         column_widths.append(column_width)
 
