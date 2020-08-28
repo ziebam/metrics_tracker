@@ -3,13 +3,7 @@ import pickle
 import sys
 from pathlib import Path
 
-from .pprinting_utils import clear_screen, print_data
-
-
-def decision_confirmed():
-    decision = input("Are you sure (y/n)?: ").lower()
-
-    return bool(decision in ["y", "ye", "yes"])
+from .pprinting_utils import clear_screen, decision_confirmed, print_data
 
 
 def main():

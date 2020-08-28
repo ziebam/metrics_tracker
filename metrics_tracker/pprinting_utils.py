@@ -10,6 +10,17 @@ def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
 
+def decision_confirmed():
+    """Asks the user for confirmation and returns the result.
+
+    Returns:
+        A boolean. True if the user confirmed the action, False otherwise."""
+
+    decision = input("Are you sure (y/n)?: ").lower()
+
+    return bool(decision in ["y", "ye", "yes"])
+
+
 def print_data(data, padding=1):
     """Pretty-prints the data to the terminal.
 
