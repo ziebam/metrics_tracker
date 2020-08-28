@@ -2,9 +2,45 @@
 
 import pytest
 
-from metrics_tracker.pprinting_utils import print_data
+from metrics_tracker.pprinting_utils import decision_confirmed, print_data
 
 BASE_TEST_DATA = [["1", "test metric", "0"]]
+
+
+def test_decision_confirmed(monkeypatch):
+    with monkeypatch.context():
+        monkeypatch.setattr("builtins.input", lambda _: "y")
+        assert decision_confirmed()
+
+        monkeypatch.setattr("builtins.input", lambda _: "ye")
+        assert decision_confirmed()
+
+        monkeypatch.setattr("builtins.input", lambda _: "yes")
+        assert decision_confirmed()
+
+        monkeypatch.setattr("builtins.input", lambda _: "Y")
+        assert decision_confirmed()
+
+        monkeypatch.setattr("builtins.input", lambda _: "YE")
+        assert decision_confirmed()
+
+        monkeypatch.setattr("builtins.input", lambda _: "YES")
+        assert decision_confirmed()
+
+        monkeypatch.setattr("builtins.input", lambda _: "")
+        assert not decision_confirmed()
+
+        monkeypatch.setattr("builtins.input", lambda _: "n")
+        assert not decision_confirmed()
+
+        monkeypatch.setattr("builtins.input", lambda _: "no")
+        assert not decision_confirmed()
+
+        monkeypatch.setattr("builtins.input", lambda _: "N")
+        assert not decision_confirmed()
+
+        monkeypatch.setattr("builtins.input", lambda _: "NO")
+        assert not decision_confirmed()
 
 
 def test_print_data_with_default_padding(capfd):
