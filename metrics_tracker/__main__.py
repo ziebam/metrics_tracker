@@ -3,7 +3,15 @@ import pickle
 import sys
 from pathlib import Path
 
-from .pprinting_utils import clear_screen, decision_confirmed, print_data
+from .action_handlers import (
+    add_to_metric,
+    create_metric,
+    update_metric,
+    reset_metric,
+    remove_metric,
+    delete_metrics,
+    list_metrics,
+)
 
 
 def main():
@@ -18,89 +26,43 @@ def main():
 
     parser = argparse.ArgumentParser(prog="Metrics Tracker")
 
-    parser.add_argument("-c", "--create", metavar="metric")
+    parser.add_argument("-c", "--create", metavar="metric_name")
     parser.add_argument(
-        "-a", "--add", nargs=2, type=int, metavar=("metric_id", "amount")
+        "-a", "--add", nargs=2, type=int, metavar=("metric_id", "amount_to_add")
     )
-    parser.add_argument("-u", "--update", nargs=2, metavar=("metric_id", "new_name"))
+    parser.add_argument(
+        "-u", "--update", nargs=2, metavar=("metric_id", "new_metric_name")
+    )
     parser.add_argument("--reset", type=int, metavar="metric_id")
     parser.add_argument("--remove", type=int, metavar="metric_id")
     parser.add_argument("--delete", action="store_true")
-    parser.add_argument("--list", action="store_true")
+    parser.add_argument("-l", "--list", action="store_true")
 
     if len(sys.argv) == 1:
         sys.exit(parser.print_help())
 
     args = parser.parse_args()
 
-    if args.create:
-        metric_id = len(metrics) + 1
-        metric = args.create
-        metrics.append([metric_id, metric, 0])
-
-        clear_screen()
-        print(f'Created metric "{metric}" succesfully.')
-        print_data(metrics)
+    if metric_name := args.create:
+        create_metric(metric_name, metrics)
 
     if args.add:
-        index, to_add = (args.add[0] - 1, args.add[1])
-        metrics[index][2] += to_add
-
-        clear_screen()
-        print(f'Added {to_add} to the metric "{metrics[index][1]}" succesfully.')
-        print_data(metrics)
+        add_to_metric(*args.add, metrics)
 
     if args.update:
-        index, new_name = (int(args.update[0]) - 1, args.update[1])
-        old_name = metrics[index][1]
+        update_metric(*args.update, metrics)
 
-        metrics[index][1] = new_name
+    if metric_id := args.reset:
+        reset_metric(metric_id, metrics)
 
-        clear_screen()
-        print(f'Updated name of metric "{old_name}" to "{new_name}" succesfully.')
-        print_data(metrics)
-
-    if args.reset:
-        if decision_confirmed():
-            index = args.reset - 1
-            metrics[index][2] = 0
-
-            clear_screen()
-            print(f'Reset metric "{metrics[index][1]}" to 0 succesfully.')
-            print_data(metrics)
-        else:
-            sys.exit("Operation cancelled. Aborting.")
-
-    if args.remove:
-        if decision_confirmed():
-            index = args.remove - 1
-            name = metrics[index][1]
-
-            for metric in metrics[index + 1 :]:
-                metric[0] -= 1
-
-            del metrics[index]
-
-            clear_screen()
-            print(f'Removed metric "{name}" succesfully.')
-            print_data(metrics)
-        else:
-            sys.exit("Operation cancelled. Aborting.")
+    if metric_id := args.remove:
+        remove_metric(metric_id, metrics)
 
     if args.delete:
-        if decision_confirmed():
-            metrics = []
-            clear_screen()
-            print("Deleted the data succesfully.\n")
-        else:
-            sys.exit("Operation cancelled. Aborting.")
+        delete_metrics(metrics)
 
     if args.list:
-        if metrics:
-            clear_screen()
-            print_data(metrics)
-        else:
-            sys.exit("There isn't any data to list. Aborting.")
+        list_metrics(metrics)
 
     with open(data_file, "wb") as data:
         pickle.dump(metrics, data)
