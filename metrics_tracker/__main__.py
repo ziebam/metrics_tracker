@@ -6,11 +6,11 @@ from pathlib import Path
 from .action_handlers import (
     add_to_metric,
     create_metric,
-    update_metric,
-    reset_metric,
-    remove_metric,
     delete_metrics,
     list_metrics,
+    remove_metric,
+    reset_metric,
+    update_metric,
 )
 
 
