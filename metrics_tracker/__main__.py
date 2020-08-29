@@ -28,19 +28,48 @@ def main():
     with open(data_file, "rb") as data:
         metrics = pickle.load(data)
 
-    parser = argparse.ArgumentParser(prog="Metrics Tracker")
+    help_message = """python -m metrics_tracker [-h] [-c/--create <metric_name>] [-a/--add <metric_id> <amount_to_add]
+                                 [-u/--update <metric_id> <new_metric_name>] [--reset <metric_id>]
+                                 [--remove <metric_id>] [--delete] [-l/--list]"""
 
-    parser.add_argument("-c", "--create", metavar="metric_name")
+    parser = argparse.ArgumentParser(
+        prog="python -m metrics_tracker",
+        usage=help_message,
+        description="A commmand-line metrics tracker. When run with no arguments, this help message will be displayed.",
+    )
+
     parser.add_argument(
-        "-a", "--add", nargs=2, type=int, metavar=("metric_id", "amount_to_add")
+        "-c", "--create", help="add a metric <metric_name>", metavar="metric_name"
     )
     parser.add_argument(
-        "-u", "--update", nargs=2, metavar=("metric_id", "new_metric_name")
+        "-a",
+        "--add",
+        nargs=2,
+        type=int,
+        help="add <amount_to_add> to the metric with ID <metric_id>",
+        metavar=("metric_id", "amount_to_add"),
     )
-    parser.add_argument("--reset", type=int, metavar="metric_id")
-    parser.add_argument("--remove", type=int, metavar="metric_id")
-    parser.add_argument("--delete", action="store_true")
-    parser.add_argument("-l", "--list", action="store_true")
+    parser.add_argument(
+        "-u",
+        "--update",
+        nargs=2,
+        help="update the name of metric with ID <metric_id> to be <new_metric_name>",
+        metavar=("metric_id", "new_metric_name"),
+    )
+    parser.add_argument(
+        "--reset",
+        type=int,
+        help="reset the value of metric with ID <metric_id> to 0",
+        metavar="metric_id",
+    )
+    parser.add_argument(
+        "--remove",
+        type=int,
+        help="remove a metric with ID <metric_id>",
+        metavar="metric_id",
+    )
+    parser.add_argument("--delete", action="store_true", help="delete all metrics")
+    parser.add_argument("-l", "--list", action="store_true", help="list all metrics")
 
     if len(sys.argv) == 1:
         sys.exit(parser.print_help())
