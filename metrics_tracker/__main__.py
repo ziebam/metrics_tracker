@@ -1,3 +1,5 @@
+"""Entry point for the program."""
+
 import argparse
 import pickle
 import sys
@@ -15,6 +17,8 @@ from .action_handlers import (
 
 
 def main():
+    """Handles the parser setup and dispatches arguments to action handlers."""
+
     data_file = Path("data.pickle")
 
     if not data_file.is_file():
