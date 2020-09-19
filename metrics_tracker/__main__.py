@@ -22,7 +22,7 @@ def main():
 
     config = configparser.ConfigParser()
     config.read("config.ini")
-    data_file = Path(config["path"]["data_file_path"])
+    data_file = Path(config["paths"]["data_file_path"])
 
     if not data_file.is_file():
         with open(data_file, "wb") as data:
