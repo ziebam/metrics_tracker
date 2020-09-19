@@ -1,6 +1,7 @@
 """Entry point for the program."""
 
 import argparse
+import configparser
 import pickle
 import sys
 from pathlib import Path
@@ -19,7 +20,9 @@ from .action_handlers import (
 def main():
     """Handles the parser setup and dispatches arguments to action handlers."""
 
-    data_file = Path("data.pickle")
+    config = configparser.ConfigParser()
+    config.read("config.ini")
+    data_file = Path(config["path"]["data_file_path"])
 
     if not data_file.is_file():
         with open(data_file, "wb") as data:
@@ -101,4 +104,5 @@ def main():
         pickle.dump(metrics, data)
 
 
-main()
+if __name__ == "__main__":
+    main()
